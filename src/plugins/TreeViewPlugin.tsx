@@ -7,18 +7,26 @@ export default function TreeViewPlugin(): JSX.Element {
   function fetchFormatData(
     node: any,
     isRoot: boolean = true, // Add a parameter to track if the current node is the root
-  ): { type: string; text: string; format: string[] }[] {
-    let result: { type: string; text: string; format: string[] }[] = [];
+  ): { type: string; text: string; format: string[]; style: string }[] {
+    let result: {
+      type: string;
+      text: string;
+      format: string[];
+      style: string;
+    }[] = [];
 
     if (!node.children || node.children.length === 0) {
       if (
-        (node.hasOwnProperty("format") && node.hasOwnProperty("text")) ||
+        (node.hasOwnProperty("style") &&
+          node.hasOwnProperty("format") &&
+          node.hasOwnProperty("text")) ||
         node.hasOwnProperty("type")
       ) {
         result.push({
           type: node.type,
           text: node.text ?? "\n",
           format: getFormatTypeFromFormatValue(node.format) ?? [],
+          style: node.style ?? "",
         });
       }
     } else {
@@ -31,6 +39,7 @@ export default function TreeViewPlugin(): JSX.Element {
             type: "linebreak",
             text: "\n",
             format: [],
+            style: "",
           });
         }
       }
@@ -59,7 +68,12 @@ export default function TreeViewPlugin(): JSX.Element {
     return formats.length > 0 ? formats : ["None"];
   }
 
-  function convertToHTML(type: string, text: string, format: string[]) {
+  function convertToHTML(
+    type: string,
+    text: string,
+    format: string[],
+    style: string,
+  ) {
     if (text === " ") {
       return " ";
     }
@@ -72,6 +86,7 @@ export default function TreeViewPlugin(): JSX.Element {
       Italic: "i",
       Strike: "s",
       Underline: "u",
+      Font: "font",
     };
 
     let html = text;
@@ -82,6 +97,13 @@ export default function TreeViewPlugin(): JSX.Element {
       }
       const openTag = `<${formatTags[format[i]]}>`;
       const closeTag = `</${formatTags[format[i]]}>`;
+      html = openTag + html + closeTag;
+    }
+
+    if (style !== "") {
+      let color = style.replace(":", "=");
+      const openTag = `<${formatTags["Font"]} ${color.substring(0, 7)}"${color.substring(7, 14)}">`;
+      const closeTag = `</${formatTags["Font"]}>`;
       html = openTag + html + closeTag;
     }
 
@@ -98,6 +120,7 @@ export default function TreeViewPlugin(): JSX.Element {
             formats[i].type,
             formats[i].text,
             formats[i].format,
+            formats[i].style,
           );
           finalHtml = finalHtml + html;
         }
