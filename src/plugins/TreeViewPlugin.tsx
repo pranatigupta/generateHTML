@@ -1,6 +1,8 @@
 import { useLexicalComposerContext } from "@lexical/react/LexicalComposerContext";
+import { useState } from "react";
 
 export default function TreeViewPlugin(): JSX.Element {
+  const [htmlText, setHtmlText] = useState("");
   const [editor] = useLexicalComposerContext();
 
   // Function to fetch the 'text' and 'format'
@@ -110,25 +112,34 @@ export default function TreeViewPlugin(): JSX.Element {
     return html;
   }
 
+  function handleButtonClick() {
+    const formats = fetchFormatData(editor.getEditorState().toJSON().root);
+    let finalHtml = "";
+    for (let i = 0; i < formats.length; i++) {
+      const html = convertToHTML(
+        formats[i].type,
+        formats[i].text,
+        formats[i].format,
+        formats[i].style,
+      );
+      finalHtml = finalHtml + html;
+    }
+    console.log(finalHtml);
+    setHtmlText(finalHtml);
+    console.log(editor.getEditorState().toJSON());
+  }
+
   return (
-    <button
-      onClick={() => {
-        const formats = fetchFormatData(editor.getEditorState().toJSON().root);
-        let finalHtml = "";
-        for (let i = 0; i < formats.length; i++) {
-          const html = convertToHTML(
-            formats[i].type,
-            formats[i].text,
-            formats[i].format,
-            formats[i].style,
-          );
-          finalHtml = finalHtml + html;
-        }
-        console.log(finalHtml);
-        console.log(editor.getEditorState().toJSON());
-      }}
-    >
-      TEST
-    </button>
+    <div>
+      <button
+        className={"get-html-button"}
+        onClick={() => {
+          handleButtonClick();
+        }}
+      >
+        Get HTML
+      </button>
+      <div className="html-text">{htmlText}</div>
+    </div>
   );
 }

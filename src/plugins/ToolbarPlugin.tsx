@@ -45,36 +45,11 @@ export default function ToolbarPlugin() {
       setIsItalic(selection.hasFormat("italic"));
       setIsUnderline(selection.hasFormat("underline"));
       setIsStrikethrough(selection.hasFormat("strikethrough"));
-    }
-    if ($isRangeSelection(selection) || $isTableSelection(selection)) {
       setFontColor(
         $getSelectionStyleValueForProperty(selection, "color", "#000"),
       );
     }
   }, [editor]);
-
-  const applyStyleText = useCallback(
-    (styles: Record<string, string>, skipHistoryStack?: boolean) => {
-      editor.update(
-        () => {
-          const selection = $getSelection();
-          console.log("selection:", selection);
-          if (selection !== null) {
-            $patchStyleText(selection, styles);
-          }
-        },
-        skipHistoryStack ? { tag: "historic" } : {},
-      );
-    },
-    [editor],
-  );
-
-  // const onFontColorSelect = useCallback(
-  //   (value: string, skipHistoryStack: boolean) => {
-  //     applyStyleText({ color: value }, skipHistoryStack);
-  //   },
-  //   [applyStyleText],
-  // );
 
   const onFontColorSelect = useCallback(
     (value: string) => {
@@ -83,7 +58,6 @@ export default function ToolbarPlugin() {
         if (selection !== null) {
           $patchStyleText(selection, { color: value });
         }
-        setFontColor(value);
       });
       setFontColor(value);
     },
