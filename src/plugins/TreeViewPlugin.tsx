@@ -137,7 +137,7 @@ export default function TreeViewPlugin(): JSX.Element {
   }
 
   return (
-    <div allow="clipboard-read; clipboard-write">
+    <div>
       <button
         className={"html-button"}
         onClick={() => {
