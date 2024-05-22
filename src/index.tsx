@@ -9,8 +9,8 @@ const root = ReactDOM.createRoot(rootElement);
 root.render(
   <React.StrictMode>
     <div className="App">
-      <h1>React.js Rich Text Lexical Example</h1>
+      <h1>HTML GENERATOR</h1>
       <App />
     </div>
-  </React.StrictMode>
+  </React.StrictMode>,
 );

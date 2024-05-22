@@ -6,15 +6,12 @@ import {
   $isRangeSelection,
   CAN_REDO_COMMAND,
   CAN_UNDO_COMMAND,
-  FORMAT_ELEMENT_COMMAND,
   FORMAT_TEXT_COMMAND,
-  RangeSelection,
   REDO_COMMAND,
   SELECTION_CHANGE_COMMAND,
   UNDO_COMMAND,
 } from "lexical";
 import { useCallback, useEffect, useRef, useState } from "react";
-import { $isTableSelection } from "@lexical/table";
 import {
   $patchStyleText,
   $getSelectionStyleValueForProperty,
@@ -59,7 +56,6 @@ export default function ToolbarPlugin() {
           $patchStyleText(selection, { color: value });
         }
       });
-      setFontColor(value);
     },
     [editor],
   );

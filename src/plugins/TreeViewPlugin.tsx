@@ -112,7 +112,7 @@ export default function TreeViewPlugin(): JSX.Element {
     return html;
   }
 
-  function handleButtonClick() {
+  function handleGetHTMLButtonClick() {
     const formats = fetchFormatData(editor.getEditorState().toJSON().root);
     let finalHtml = "";
     for (let i = 0; i < formats.length; i++) {
@@ -124,22 +124,39 @@ export default function TreeViewPlugin(): JSX.Element {
       );
       finalHtml = finalHtml + html;
     }
-    console.log(finalHtml);
     setHtmlText(finalHtml);
-    console.log(editor.getEditorState().toJSON());
+  }
+
+  async function copyToClipboard(text: string): Promise<void> {
+    try {
+      await navigator.clipboard.writeText(text);
+      console.log("Text copied to clipboard");
+    } catch (err) {
+      console.error("Failed to copy: ", err);
+    }
   }
 
   return (
-    <div>
+    <div allow="clipboard-read; clipboard-write">
       <button
-        className={"get-html-button"}
+        className={"html-button"}
         onClick={() => {
-          handleButtonClick();
+          handleGetHTMLButtonClick();
         }}
       >
         Get HTML
       </button>
-      <div className="html-text">{htmlText}</div>
+      <div className="html-text" data-text="See HTML here...">
+        {htmlText}
+      </div>
+      <button
+        className={"html-button"}
+        onClick={() => {
+          copyToClipboard(htmlText);
+        }}
+      >
+        Copy HTML
+      </button>
     </div>
   );
 }
